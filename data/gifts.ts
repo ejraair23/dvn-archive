@@ -62,7 +62,6 @@ export const gifts: Gift[] = [
   // Ganti "title" dan "tagline" di bawah kalau mau nama lain yang lebih
   // sesuai sama inside joke kalian — yang penting jangan sebut dua nama
   // hadiahnya langsung.
-  {
     {
         id: "dua-bentuk",
           title: "Dua Bentuk",
