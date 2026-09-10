@@ -85,7 +85,7 @@ export const gifts: Gift[] = [
                                                                                       ready: false,
                                                                                         accent: "blush",
                                                                                         },
-                                                                                        
+
   {
     id: "divana-wrapped",
     title: "Divana Wrapped",
@@ -96,7 +96,7 @@ export const gifts: Gift[] = [
     ready: false,
     accent: "amber",
   },
- 
+  {
     id: "nobody-tell-her",
     title: "Nobody Tell Her",
     tagline: "Sebuah game kecil. Main aja, gak usah dijelasin.",
