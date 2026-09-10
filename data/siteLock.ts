@@ -12,6 +12,6 @@ export const siteUnlock = {
   unlockAt: "2026-09-30T00:00:00+07:00",
   lockedTitle: "Belum waktunya.",
   lockedMessage: "Sabar dulu. Ini baru bisa dibuka pas hari-H.",
-  previewPrompt: "punya kode preview?",
+  previewPrompt: "???",
   previewWrongMessage: "kode belum pas.",
 };

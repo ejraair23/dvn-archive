@@ -3,9 +3,9 @@
 // (huruf besar/kecil dan spasi di ujung otomatis diabaikan saat dicek).
 
 export const puzzle = {
-  question: "Di mana pertama kali gue sama lu ketemu?",
-  answers: ["sekolah", "di sekolah"],
-  hint: "Petunjuk: tempat yang lu datengin hampir tiap hari waktu masih sering ketemu gue.",
+  question: "Tentukan nilai x jika x² = 5476. Kemudian hitung x × 406649. Tuliskan hasil akhirnya tanpa titik atau spasi.",
+  answers: ["30.092.026","30092026","30,092,2026"]
+  hint: "Petunjuk: Cari nilai x terlebih dahulu, lalu gunakan nilai tersebut untuk menyelesaikan operasi berikutnya.",
   successMessage: "Nah bener. Masuk, ini punya lu.",
   wrongMessage: "Hmm, belum tepat. Coba lagi deh.",
 };

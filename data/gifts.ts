@@ -63,28 +63,30 @@ export const gifts: Gift[] = [
   // sesuai sama inside joke kalian — yang penting jangan sebut dua nama
   // hadiahnya langsung.
   {
-    id: "dua-versi-lu",
-    title: "Dua Versi Lu",
-    tagline: "Dua cara beda buat gambarin lu, dibikin khusus.",
-    emoji: "🎭",
-    type: "bundle",
-    sections: [
-      {
-        label: "Versi pertama",
-        type: "download",
-        href: "/gifts/skins/divana-skin.png",
-        ready: false,
-      },
-      {
-        label: "Versi kedua",
-        type: "gallery",
-        gallery: ["/gifts/oc-gacha/placeholder-1.png"],
-        ready: false,
-      },
-    ],
-    ready: false,
-    accent: "blush",
-  },
+    {
+        id: "dua-bentuk",
+          title: "Dua Bentuk",
+            tagline: "Dua interpretasi kecil yang gue bikin khusus buat lu.",
+              emoji: "🎭",
+                type: "bundle",
+                  sections: [
+                      {
+                            label: "Yang pertama",
+                                  type: "download",
+                                        href: "/gifts/skins/divana-skin.png",
+                                              ready: false,
+                                                  },
+                                                      {
+                                                            label: "Yang kedua",
+                                                                  type: "text",
+                                                                        text: "Isi teks lu di sini.",
+                                                                              ready: false,
+                                                                                  },
+                                                                                    ],
+                                                                                      ready: false,
+                                                                                        accent: "blush",
+                                                                                        },
+    }
   {
     id: "divana-wrapped",
     title: "Divana Wrapped",
@@ -95,23 +97,13 @@ export const gifts: Gift[] = [
     ready: false,
     accent: "amber",
   },
-  {
-    id: "stok-video",
-    title: "Stok Video Khusus",
-    tagline: "Beberapa video yang gue kumpulin/bikin buat lu.",
-    emoji: "🎬",
-    type: "gallery",
-    gallery: ["/gifts/videos/placeholder.mp4"],
-    ready: false,
-    accent: "mist",
-  },
-  {
+ 
     id: "nobody-tell-her",
     title: "Nobody Tell Her",
     tagline: "Sebuah game kecil. Main aja, gak usah dijelasin.",
     emoji: "🕹️",
     type: "link",
-    href: "https://example.com/ganti-link-game-di-sini",
+    href: "https://www.roblox.com/share?code=59fca2d33bc870499caef0100b047e88&type=ExperienceDetails&stamp=1789042573268",
     ready: false,
     accent: "amber",
   },
