@@ -85,7 +85,7 @@ export const gifts: Gift[] = [
                                                                                       ready: false,
                                                                                         accent: "blush",
                                                                                         },
-    }
+                                                                                        
   {
     id: "divana-wrapped",
     title: "Divana Wrapped",
