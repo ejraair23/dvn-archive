@@ -78,7 +78,7 @@ export const gifts: Gift[] = [
                                                       {
                                                             label: "Yang kedua",
                                                                   type: "text",
-                                                                  href: "/gifts/oc-gacha/divana-gacha.txt"
+                                                                  href: "/gifts/oc-gacha/divana-gacha.txt",
                                                                               ready: false,
                                                                                   },
                                                                                     ],
