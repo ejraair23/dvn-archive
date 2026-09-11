@@ -128,7 +128,7 @@ export default function BirthdayPage() {
               <SectionLabel>🪦 arsip receh</SectionLabel>
               <h2 className="mt-2 font-display text-2xl text-paper">Things That Died This Year</h2>
               <p className="mt-2 text-sm leading-relaxed text-paper/55">
-                Bukan bagian serius. Cuma daftar hal-hal yang "gak selamat" sampai akhir tahun.
+                Bukan bagian serius. Cuma daftar hal-hal yang &quot;gak selamat&quot; sampai akhir tahun.
               </p>
 
               <div className="mt-6 space-y-3">
