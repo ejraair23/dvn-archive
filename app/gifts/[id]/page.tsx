@@ -3,16 +3,16 @@ import Ambient from "@/components/Ambient";
 import NavBar from "@/components/NavBar";
 import RequirePuzzle from "@/components/RequirePuzzle";
 import { LinkButton } from "@/components/Button";
-import { gifts } from "@/data/gifts";
+import { packs } from "@/data/gifts";
 import { accentClasses } from "@/lib/accent";
 
 export function generateStaticParams() {
-  return gifts.filter((g) => g.type !== "custom").map((g) => ({ id: g.id }));
+  return packs.map((g) => ({ id: g.id }));
 }
 
 export default function GiftDetailPage({ params }: { params: { id: string } }) {
-  const gift = gifts.find((g) => g.id === params.id);
-  if (!gift || gift.type === "custom") notFound();
+  const gift = packs.find((g) => g.id === params.id);
+  if (!gift) notFound();
 
   const c = accentClasses[gift.accent];
 
@@ -33,46 +33,11 @@ export default function GiftDetailPage({ params }: { params: { id: string } }) {
             <p className="mt-2 text-sm leading-relaxed text-paper/60">{gift.tagline}</p>
 
             <div className="mt-8">
-              {gift.type === "bundle" && gift.sections ? (
-                <div className="space-y-6 text-left">
-                  {gift.sections.map((section, i) => (
-                    <div key={i} className="rounded-2xl border border-paper/10 bg-plum/40 p-5">
-                      <p className="font-mono text-xs uppercase tracking-[0.15em] text-paper/35">
-                        {section.label}
-                      </p>
-                      <div className="mt-4">
-                        {!section.ready ? (
-                          <PlaceholderNotice />
-                        ) : section.type === "download" && section.href ? (
-                          <LinkButton href={section.href} external>
-                            buka / unduh
-                          </LinkButton>
-                        ) : section.type === "gallery" && section.gallery ? (
-                          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            {section.gallery.map((src) => (
-                              <div
-                                key={src}
-                                className="aspect-square rounded-2xl border border-paper/10 bg-plum/50 bg-cover bg-center"
-                                style={{ backgroundImage: `url(${src})` }}
-                              />
-                            ))}
-                          </div>
-                        ) : section.type === "text" && section.body ? (
-                          <p className="text-sm leading-relaxed text-paper/70 whitespace-pre-line">
-                            {section.body}
-                          </p>
-                        ) : (
-                          <PlaceholderNotice />
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : !gift.ready ? (
+              {!gift.ready ? (
                 <PlaceholderNotice />
               ) : gift.type === "link" && gift.href ? (
                 <LinkButton href={gift.href} external>
-                  main game
+                  buka
                 </LinkButton>
               ) : gift.type === "download" && gift.href ? (
                 <LinkButton href={gift.href} external>

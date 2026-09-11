@@ -2,7 +2,7 @@
 
 Birthday project pribadi buat Divana. Satu website, banyak hadiah di dalamnya.
 
-Dibuat pakai Next.js (App Router) + TypeScript + Tailwind CSS. Tidak pakai database — progress (puzzle & secret file) disimpan di `localStorage` browser.
+Dibuat pakai Next.js (App Router) + TypeScript + Tailwind CSS. Tidak pakai database — progress (puzzle, hidden objects, future messages) disimpan di `localStorage` browser.
 
 ---
 
@@ -24,22 +24,60 @@ npm start
 
 ---
 
-## 2. Struktur project
+## 2. Struktur project & alur website
 
 ```
-app/                  -> halaman-halaman (routing otomatis dari nama folder)
-  page.tsx            -> halaman awal
-  puzzle/page.tsx      -> halaman puzzle
-  gifts/page.tsx       -> daftar semua hadiah
-  gifts/[id]/page.tsx  -> halaman detail satu hadiah
-  message/page.tsx     -> birthday message
-  future/page.tsx      -> future messages
-  secret/page.tsx       -> secret file
+app/
+  page.tsx                  -> halaman awal
+  puzzle/page.tsx            -> puzzle pembuka
+  gifts/page.tsx             -> TOC of Being Divana (daftar isi utama)
+  gifts/[id]/page.tsx        -> halaman detail satu pack (All Packs)
+  hall-of-fame/page.tsx       -> Divana Hall of Fame
+  wrapped/page.tsx            -> Divana Wrapped & Awards (gabungan)
+  birthday/page.tsx           -> Birthday & Future Messages (gabungan, satu halaman panjang)
+  hidden-objects/page.tsx     -> Find All Hidden Objects + easter egg
 
-components/           -> potongan UI yang dipakai berulang (tombol, card, dll)
-data/                 -> SEMUA KONTEN yang mau kamu edit ada di sini
-lib/                  -> fungsi bantu kecil (localStorage, format teks)
-public/               -> file statis: gambar, wallpaper, skin, sticker, video
+components/  -> potongan UI yang dipakai berulang (tombol, card, dll)
+data/        -> SEMUA KONTEN yang mau kamu edit ada di sini
+lib/         -> fungsi bantu kecil (localStorage, format teks)
+public/      -> file statis: gambar, skin, sticker, dll
+```
+
+Alur halaman: **halaman awal → puzzle → TOC (`/gifts`)**, dari TOC Divana bisa masuk ke salah satu dari 4 section besar atau salah satu pack di "All Packs".
+
+### Struktur konten (TOC of Being Divana)
+
+```
+TOC of Being Divana (/gifts)
+├── Hall of Fame                    -> /hall-of-fame
+│
+├── Divana Wrapped & Awards         -> /wrapped
+│   ├── Divana Wrapped (slides)
+│   ├── Top Moments
+│   ├── Achievement System
+│   ├── Divana Awards
+│   ├── Inside Joke Statistics
+│   ├── Completely Unnecessary Statistics™
+│   └── Annual Report
+│
+├── Birthday & Future Messages      -> /birthday (satu halaman, scroll)
+│   ├── Birthday Message
+│   ├── Birthday Wishes / doa
+│   ├── Things That Died This Year (komedi, bukan serius)
+│   └── A Message From the Future (Divana nulis sendiri)
+│
+├── All Packs                       -> card-card di /gifts, detail di /gifts/[id]
+│   ├── Meme + WA Sticker Pack
+│   ├── Early Access Pass
+│   ├── Poster + Certificate Pack
+│   ├── Profile Picture Pack
+│   ├── Minecraft Skin
+│   └── Fake Error Page Pack
+│
+├── More Gifts Coming Soon          -> bukan link, cuma penutup di /gifts
+│
+└── Find All Hidden Objects         -> /hidden-objects
+    └── 🔒 easter egg rahasia (reveal setelah semua objek ketemu)
 ```
 
 Kalau mau ubah **konten**, hampir semua yang perlu kamu sentuh ada di folder `data/`. Kamu jarang perlu masuk ke folder `app/` atau `components/`.
@@ -48,246 +86,225 @@ Kalau mau ubah **konten**, hampir semua yang perlu kamu sentuh ada di folder `da
 
 ## 3. Cara ubah jawaban puzzle
 
-Edit file:
-
-```
-data/puzzle.ts
-```
+Edit file `data/puzzle.ts`:
 
 ```ts
 export const puzzle = {
-  question: "Di mana pertama kali gue sama lu ketemu?",
-  answers: ["sekolah", "di sekolah"], // bisa isi beberapa variasi jawaban benar
+  question: "...",
+  answers: ["jawaban1", "variasi jawaban lain"], // bisa isi beberapa variasi jawaban benar
   hint: "...",
   successMessage: "...",
   wrongMessage: "...",
 };
 ```
 
-- `answers` bisa diisi lebih dari satu, kalau kamu mau terima beberapa variasi jawaban (misalnya dengan/tanpa "di").
-- Besar-kecil huruf dan spasi berlebih otomatis diabaikan saat dicek, jadi kamu tidak perlu mikirin itu.
+- `answers` bisa diisi lebih dari satu kalau kamu mau terima beberapa variasi jawaban.
+- Besar-kecil huruf dan spasi berlebih otomatis diabaikan saat dicek.
 
 ---
 
-## 4. Cara ubah kode Secret File
+## 4. Hall of Fame
 
-Kode Secret File **tidak** disimpan di dalam kode sumber (supaya tidak kelihatan kalau ada yang buka file project-nya), tapi lewat **environment variable**.
-
-### Untuk development di komputer sendiri:
-
-1. Copy `.env.example` jadi `.env.local`:
-   ```bash
-   cp .env.example .env.local
-   ```
-2. Buka `.env.local`, ganti nilainya:
-   ```
-   NEXT_PUBLIC_SECRET_CODE=kode_rahasia_kamu
-   ```
-3. Restart `npm run dev` supaya perubahan kebaca.
-
-### Untuk production di Vercel:
-
-Buka dashboard project di Vercel → **Settings → Environment Variables** → tambah:
-
-- **Key**: `NEXT_PUBLIC_SECRET_CODE`
-- **Value**: kode rahasia kamu
-
-Lalu redeploy.
-
-> Catatan jujur: karena variabel ini diawali `NEXT_PUBLIC_`, secara teknis dia tetap ada di dalam kode yang dikirim ke browser (bisa ditemukan orang yang benar-benar niat buka DevTools). Ini cukup untuk pengalaman "puzzle santai", tapi bukan keamanan sungguhan — sesuai konsep awal project ini.
+Edit `data/hallOfFame.ts` — array `hallOfFame`. Tiap entri = satu penghargaan (`title`, `subtitle`, `emoji`). Tambah/kurangi entri sesuka hati, halamannya otomatis menyesuaikan.
 
 ---
 
-## 5. Cara nambah hadiah baru
+## 5. Divana Wrapped & Awards
 
-Buka file:
+Semua data untuk section gabungan ini ada di **satu file**: `data/wrapped.ts`. Filenya dipecah jadi beberapa array/konstanta, masing-masing untuk satu "modul" di halaman `/wrapped`:
 
+| Export             | Untuk bagian apa                          |
+|---------------------|--------------------------------------------|
+| `wrappedSlides`     | Slide-slide Wrapped utama (rekap tahun ini) |
+| `topMoments`        | Top Moments                                 |
+| `achievements`      | Achievement System (badge, punya `unlocked: boolean`) |
+| `awards`            | Divana Awards (kategori + pemenang)         |
+| `insideJokes`       | Inside Joke Statistics                      |
+| `unnecessaryStats`  | Completely Unnecessary Statistics™          |
+| `annualReportNote`  | Catatan penutup gaya annual report          |
+
+Semuanya masih **placeholder** — ganti isinya sesuai konten Wrapped yang sudah kamu siapkan. Tidak perlu bikin Wrapped baru di tempat lain; semua data Wrapped memang seharusnya tetap di file ini.
+
+---
+
+## 6. Birthday Message & Birthday Wishes
+
+Edit `data/birthdayMessage.ts`:
+
+- `paragraphs` — pesan utama, tiap item jadi satu paragraf.
+- `wishes` — bagian doa/harapan ulang tahun, ditampilkan terpisah dan lebih menonjol. **Isi dengan sesuatu yang spesifik buat Divana**, bukan kalimat generik.
+
+Keduanya tampil di halaman `/birthday`, di bagian paling atas.
+
+---
+
+## 7. Things That Died This Year
+
+Edit `data/thingsThatDied.ts` — array `thingsThatDied`. Tiap entri (`name`, `causeOfDeath`, `years`) jadi satu "nisan" kecil di halaman `/birthday`. Ini bagian komedi/receh, bukan pesan serius — tulis dengan nada santai.
+
+---
+
+## 8. A Message From the Future — ini bukan config, tapi fitur buat Divana
+
+Beda dari bagian lain, **bagian ini bukan sesuatu yang kamu isi lewat kode**. Ini fitur interaktif di halaman `/birthday` (paling bawah) di mana Divana sendiri yang nulis pesannya:
+
+- Dia bisa tulis pesan bebas
+- Boleh isi "buat siapa" (opsional)
+- Boleh kasih tanggal baru boleh dibuka (opsional)
+- Pesan tersimpan otomatis di `localStorage` browser dia
+- Dia bisa buka/baca lagi atau hapus pesan yang sudah ditulis
+
+Kamu (pembuat website) tidak perlu — dan tidak bisa — menaruh pesan pre-set di sini. Kalau Divana ganti browser atau clear data, pesannya hilang — konsekuensi wajar dari project tanpa database.
+
+---
+
+## 9. Find All Hidden Objects & easter egg rahasia
+
+Edit `data/hiddenObjects.ts`:
+
+```ts
+export const hiddenObjects = [
+  { id: "object-1", label: "deskripsi singkat", emoji: "🍃" },
+  // tambah/kurangi objek sesuka hati
+];
+
+export const reiraEjraaSecret = {
+  title: "Reira/Ejraa Secret",
+  body: "isi rahasianya di sini",
+};
 ```
-data/gifts.ts
-```
 
-Tambahkan object baru ke array `gifts`, contoh:
+- Implementasi saat ini: satu halaman (`/hidden-objects`) berisi kartu-kartu "❔" yang diklik satu-satu sampai semua ketemu.
+- **`reiraEjraaSecret` baru ditampilkan di UI setelah SEMUA hidden object ditemukan** — sebelum itu, isinya tidak dirender ke halaman mana pun.
+- Catatan jujur soal batasan teknis: karena ini website statis tanpa backend, isi `reiraEjraaSecret` tetap ada di dalam file JavaScript yang dikirim ke browser (bisa saja ditemukan orang yang benar-benar niat buka DevTools/view-source), meski tidak ditampilkan di layar sebelum syaratnya terpenuhi. Ini sama seperti batasan Secret Code lain di project ini — cukup untuk pengalaman easter egg, bukan keamanan sungguhan.
+- Kalau kamu punya ide lokasi persembunyian yang lebih spesifik (misal disebar ke beberapa halaman berbeda, bukan satu halaman khusus), kabari saja — implementasi ini bisa disesuaikan lagi tanpa mengubah struktur data di atas.
+
+---
+
+## 10. All Packs — cara nambah/ubah pack
+
+Edit `data/gifts.ts`, array `packs`:
 
 ```ts
 {
-  id: "hadiah-baru",              // unik, dipakai di URL
-  title: "Nama Hadiahnya",
-  tagline: "Satu kalimat pendek soal hadiah ini.",
+  id: "pack-baru",                // unik, dipakai di URL
+  title: "Nama Pack",
+  tagline: "Satu kalimat pendek.",
   emoji: "🎁",
-  type: "download",               // "download" | "link" | "gallery" | "text" | "custom"
+  type: "download",               // "download" | "link" | "gallery" | "text"
   href: "/gifts/misc/file-kamu.zip",
   ready: true,                    // false = masih placeholder "segera"
   accent: "amber",                // "amber" | "moss" | "blush" | "mist"
 },
 ```
 
-Card baru otomatis muncul di halaman `/gifts` — kamu tidak perlu ubah bagian UI mana pun.
+Card baru otomatis muncul di bagian "All Packs" pada halaman `/gifts`.
 
-### Tipe hadiah (`type`) yang tersedia:
+### Tipe pack (`type`) yang tersedia:
 
-| type       | Dipakai untuk                             | Field tambahan     |
-|------------|--------------------------------------------|---------------------|
-| `download` | Satu file untuk diunduh/dibuka (skin, zip) | `href`              |
-| `link`     | Link ke luar (misalnya game)                | `href`              |
-| `gallery`  | Beberapa gambar/video sekaligus             | `gallery: [...]`    |
-| `text`     | Teks panjang langsung di halaman            | `body`              |
-| `custom`   | Sudah punya halaman sendiri (jangan dipakai untuk hadiah baru kecuali kamu juga buat halamannya) | - |
-| `bundle`   | Gabungan beberapa bagian berbeda dalam SATU card — cocok kalau judul hadiahnya sengaja dibikin gak nyebut isinya langsung (contoh: gabungan Minecraft Skin + OC Gacha jadi satu card "Dua Versi Lu") | `sections: [...]` |
+| type       | Dipakai untuk                              | Field tambahan   |
+|------------|----------------------------------------------|-------------------|
+| `download` | Satu file untuk diunduh/dibuka (skin, zip)   | `href`            |
+| `link`     | Link ke luar                                  | `href`            |
+| `gallery`  | Beberapa gambar sekaligus                     | `gallery: [...]`  |
+| `text`     | Teks panjang langsung di halaman              | `body`            |
 
-### Contoh `bundle` (gabungan beberapa isi dalam satu card):
-
-```ts
-{
-  id: "dua-versi-lu",
-  title: "Dua Versi Lu",           // judul sengaja samar, gak nyebut isinya
-  tagline: "Dua cara beda buat gambarin lu, dibikin khusus.",
-  emoji: "🎭",
-  type: "bundle",
-  sections: [
-    { label: "Versi pertama", type: "download", href: "/gifts/skins/divana-skin.png", ready: true },
-    { label: "Versi kedua", type: "gallery", gallery: ["/gifts/oc-gacha/gambar1.png"], ready: true },
-  ],
-  ready: true, // ready keseluruhan card; masing-masing section juga punya ready sendiri
-  accent: "blush",
-},
-```
-
-Tiap `section` punya `ready` masing-masing, jadi kamu bisa bikin satu bagian sudah siap sementara bagian lain masih placeholder.
+> Catatan: OC Gacha sudah dibatalkan dan tidak lagi ada di project ini. Minecraft Skin sekarang berdiri sendiri sebagai satu pack biasa di "All Packs".
 
 ---
 
-## 6. Future Messages — ini bukan config, tapi fitur buat Divana
+## 11. Cara masukin file/asset
 
-Beda dari bagian lain, **Future Messages bukan sesuatu yang kamu isi lewat kode**. Ini halaman interaktif di mana Divana sendiri yang nulis pesannya:
-
-- Dia bisa tulis pesan bebas
-- Boleh isi "buat siapa" (opsional)
-- Boleh kasih tanggal baru boleh dibuka (opsional — kalau kosong, langsung bisa dibaca lagi kapan saja)
-- Pesan tersimpan otomatis di `localStorage` browser dia
-- Dia bisa buka/baca lagi atau hapus pesan yang udah ditulis
-
-Kamu (pembuat website) tidak perlu — dan tidak bisa — menaruh pesan pre-set di sini. Semua kontennya murni dari Divana, dan cuma tersimpan di browser/device yang dia pakai buat nulis (kalau dia ganti browser atau clear data, pesannya hilang — ini konsekuensi dari tanpa database, konsisten dengan versi pertama project ini).
-
-Kalau suatu saat mau upgrade jadi sungguhan bisa diakses lintas device, itu butuh backend/database — di luar cakupan versi pertama ini.
-
----
-
-## 7. Cara ganti link game (Nobody Tell Her)
-
-Buka `data/gifts.ts`, cari entri dengan `id: "nobody-tell-her"`, ganti `href`:
-
-```ts
-{
-  id: "nobody-tell-her",
-  ...
-  href: "https://link-game-kamu-yang-sebenarnya.com",
-  ready: true, // ganti jadi true kalau linknya sudah siap
-},
-```
-
----
-
-## 8. Cara masukin file/asset (wallpaper, skin, sticker, video, dll)
-
-Semua file statis ditaruh di folder `public/gifts/...`, sudah dibagi per kategori:
+Semua file statis ditaruh di folder `public/gifts/...`:
 
 ```
-public/gifts/skins/         -> Minecraft skin
-public/gifts/oc-gacha/      -> gambar OC gacha
-public/gifts/wrapped/       -> gambar/slide Divana Wrapped
-public/gifts/videos/        -> video
-public/gifts/wallpapers/    -> wallpaper
-public/gifts/stickers/      -> file .zip sticker pack WhatsApp
-public/gifts/misc/          -> apa aja yang tidak masuk kategori lain
+public/gifts/skins/       -> Minecraft skin
+public/gifts/stickers/    -> file .zip sticker pack WhatsApp
+public/gifts/misc/        -> poster, PFP pack, fake error page, dan lainnya
+public/gifts/wallpapers/  -> disediakan untuk pemakaian di masa depan (tidak ada pack aktif yang memakainya sekarang)
+public/gifts/videos/      -> disediakan untuk pemakaian di masa depan
+public/gifts/wrapped/     -> disediakan kalau Wrapped nanti mau pakai gambar/slide visual
+public/audio/             -> disediakan untuk pemakaian di masa depan
 ```
 
 Langkah-langkahnya:
 
-1. Taruh file kamu di folder yang sesuai. Contoh: `public/gifts/wallpapers/pantai.png`.
-2. Di `data/gifts.ts`, arahkan `href` atau `gallery` ke path itu — **selalu mulai dengan `/`**, tanpa kata `public`:
-   ```ts
-   href: "/gifts/wallpapers/pantai.png"
-   ```
-3. Ganti `ready: false` jadi `ready: true` supaya label "segera" hilang dan tombolnya aktif.
+1. Taruh file kamu di folder yang sesuai. Contoh: `public/gifts/misc/poster-1.png`.
+2. Di `data/gifts.ts` (atau file data lain yang relevan), arahkan `href`/`gallery` ke path itu — **selalu mulai dengan `/`**, tanpa kata `public`.
+3. Ganti `ready: false` jadi `ready: true` supaya label "segera" hilang.
 
-Kalau file belum ada, biarkan saja `ready: false` — halamannya akan menampilkan pesan placeholder yang santai, bukan error.
+Kalau file belum ada, biarkan `ready: false` — halamannya menampilkan pesan placeholder yang santai, bukan error.
 
 ---
 
-## 9. Cara ubah Birthday Message
+## 12. Lock seluruh website sampai tanggal tertentu
 
-Buka `data/birthdayMessage.ts`, edit langsung teksnya.
+Website dikunci total sampai tanggal yang kamu tentukan — apa pun URL yang dibuka sebelum waktunya, yang muncul cuma halaman "belum waktunya" dengan hitung mundur.
 
-- `paragraphs` — pesan utama, tiap item jadi satu paragraf.
-- `wishes` — bagian doa/harapan ulang tahun, ditampilkan terpisah dan lebih menonjol di bawah pesan utama. Tiap item jadi satu baris harapan. **Isi ini dengan sesuatu yang spesifik buat Divana**, bukan kalimat generik kayak "semoga panjang umur" — bagian ini sengaja dipisah supaya kerasa lebih personal, bukan cuma pelengkap.
-
----
-
-## 10. Deploy ke Vercel
-
-1. Push project ini ke GitHub (repo boleh private).
-2. Buka [vercel.com](https://vercel.com), klik **Add New → Project**, pilih repo tadi.
-3. Framework preset otomatis kedeteksi sebagai **Next.js** — tidak perlu diubah apa-apa.
-4. Sebelum klik Deploy, buka bagian **Environment Variables**, tambahkan:
-   - `NEXT_PUBLIC_SECRET_CODE` = kode rahasia Secret File kamu
-5. Klik **Deploy**. Tunggu sampai selesai, lalu Vercel kasih link `https://nama-project.vercel.app`.
-6. Link itu yang dikirim ke Divana.
-
-Kalau nanti mau update konten (nambah hadiah, ganti pesan, dll), cukup edit file di `data/`, commit, push — Vercel otomatis build ulang dan update live.
-
----
-
-## 11. Lock seluruh website sampai tanggal tertentu
-
-Website ini dikunci total sampai tanggal yang kamu tentukan — apa pun URL yang dibuka sebelum waktunya, yang muncul cuma halaman "belum waktunya" dengan hitung mundur. Setelah waktunya lewat, website otomatis kebuka sendiri tanpa perlu refresh manual.
-
-Atur di file:
-
-```
-data/siteLock.ts
-```
+Atur di `data/siteLock.ts`:
 
 ```ts
 export const siteUnlock = {
   unlockAt: "2026-09-30T00:00:00+07:00", // format ISO lengkap dengan zona waktu
   lockedTitle: "Belum waktunya.",
   lockedMessage: "Sabar dulu. Ini baru bisa dibuka pas hari-H.",
+  previewPrompt: "???",
+  previewWrongMessage: "kode belum pas.",
 };
 ```
 
-- `unlockAt` — tanggal & jam website mulai bisa diakses. Zona waktu penting: `+07:00` = WIB, `+08:00` = WITA, `+09:00` = WIT. Kalau Divana buka dari zona waktu lain, waktu unlock tetap mengacu ke waktu absolut ini (bukan waktu lokal dia).
-- Pengecekan dilakukan di device/browser pembaca (client-side), konsisten dengan project ini yang tidak pakai server/database terpisah.
-- Halaman lock tidak bisa dilewati dengan langsung mengetik URL lain (misal `/gifts`) — semua route ketutup selama belum waktunya.
-
-Kalau mau matiin lock sepenuhnya (misalnya pas kamu develop/testing), gampang: ganti `unlockAt` ke tanggal yang sudah lewat, atau minta bantuan tambahin toggle `enabled` kalau butuh sering gonta-ganti.
+- Zona waktu penting: `+07:00` = WIB, `+08:00` = WITA, `+09:00` = WIT.
+- Pengecekan dilakukan di device/browser pembaca (client-side).
+- Semua route ketutup selama belum waktunya, termasuk kalau URL diketik langsung.
 
 ### Bypass lock buat kamu sendiri (preview)
 
-Supaya kamu bisa buka & cek website ini sebelum tanggal unlock — tanpa harus nunggu kayak Divana — ada kode preview terpisah.
+Di halaman lock ada teks kecil samar (`previewPrompt`, default `"???"`) — klik itu, muncul kolom kode preview.
 
-Di halaman lock, ada teks kecil dan samar bertuliskan **"punya kode preview?"** di bagian bawah (sengaja dibuat gak mencolok biar Divana gak penasaran/coba-coba klik). Klik itu, muncul kolom kode.
-
-Atur kodenya lewat environment variable, sama seperti Secret File:
+Atur kodenya lewat environment variable:
 
 ```
 NEXT_PUBLIC_PREVIEW_CODE=kode_preview_kamu
 ```
 
 - Development: isi di `.env.local` (copy dari `.env.example`).
-- Production di Vercel: tambahkan lewat **Settings → Environment Variables**.
+- Production di Vercel: **Settings → Environment Variables**.
 
-Setelah kode benar dimasukkan sekali, browser kamu otomatis "ingat" (tersimpan di localStorage) — jadi kamu gak perlu masukin kode itu lagi tiap buka website dari device/browser yang sama. Device/browser lain (termasuk punya Divana) tetap ke-lock normal sampai tanggal unlock.
-
-> Catatan yang sama seperti Secret File berlaku di sini: karena variabelnya `NEXT_PUBLIC_`, secara teknis kode ini tetap ada di kode yang dikirim ke browser. Cukup untuk mencegah Divana kebuka gak sengaja, tapi bukan keamanan yang benar-benar kuat.
+Setelah kode benar dimasukkan sekali, browser kamu otomatis "ingat" (localStorage). Device/browser lain tetap ke-lock normal.
 
 ---
 
-## 12. Reset progress (buat testing)
+## 13. Deploy ke Vercel
 
-Karena progress puzzle & secret file disimpan di `localStorage`, kalau kamu mau tes ulang dari awal:
+1. Push project ini ke GitHub (repo boleh private).
+2. Buka [vercel.com](https://vercel.com), klik **Add New → Project**, pilih repo tadi.
+3. Framework preset otomatis kedeteksi sebagai **Next.js**.
+4. Sebelum klik Deploy, buka **Environment Variables**, tambahkan:
+   - `NEXT_PUBLIC_PREVIEW_CODE` = kode preview kamu sendiri
+5. Klik **Deploy**. Setelah selesai, kamu dapat link `https://nama-project.vercel.app`.
+
+Kalau nanti mau update konten, cukup edit file di `data/`, commit, push — Vercel otomatis build ulang.
+
+---
+
+## 14. Reset progress (buat testing)
+
+Karena progress (puzzle, hidden objects, future messages) disimpan di `localStorage`:
 
 - Buka DevTools browser → tab **Application** (Chrome) atau **Storage** (Firefox) → **Local Storage** → hapus key yang diawali `divana:`.
 - Atau paling gampang: buka website di mode Incognito/Private setiap mau tes ulang.
+
+---
+
+## 15. Catatan untuk pengembangan lanjutan
+
+Bagian-bagian berikut sengaja dibuat sebagai **kerangka/placeholder** karena konten aslinya belum tersedia saat project ini dikerjakan. Tidak ada isi yang dikarang-karang — semuanya ditandai jelas di data filenya masing-masing:
+
+- **Divana Wrapped & Awards** (`data/wrapped.ts`) — semua slide, achievement, awards, inside joke, statistik, dan catatan annual report masih placeholder generik. Ganti dengan data Wrapped asli begitu tersedia.
+- **Hall of Fame** (`data/hallOfFame.ts`) — 3 entri placeholder, ganti dengan penghargaan asli.
+- **Things That Died This Year** (`data/thingsThatDied.ts`) — 2 entri placeholder.
+- **Find All Hidden Objects** (`data/hiddenObjects.ts`) — 4 objek placeholder dengan lokasi generik (satu halaman, klik kartu). Isi `reiraEjraaSecret.body` juga masih placeholder. Kalau ada ide implementasi yang lebih spesifik (misal disebar di beberapa halaman berbeda di seluruh situs), ini butuh diskusi lanjutan sebelum diimplementasikan, karena akan mengubah cara objek disimpan/dideteksi.
+- **All Packs**: Early Access Pass masih berupa teks placeholder (belum ada mekanisme "akses lebih awal" yang sebenarnya diimplementasikan — kalau kamu mau ini benar-benar berfungsi membuka satu pack lebih awal, itu perlu logic tambahan yang belum ada di versi ini). Poster + Certificate Pack, Profile Picture Pack, dan Fake Error Page Pack masih menunggu file asset asli di `public/gifts/misc/`.
 
 ---
 

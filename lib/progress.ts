@@ -1,9 +1,8 @@
 // Helper kecil untuk menyimpan progress user di localStorage,
-// supaya puzzle & secret file tidak perlu diulang tiap pindah halaman.
+// supaya puzzle tidak perlu diulang tiap pindah halaman.
 
 const KEYS = {
   puzzleSolved: "divana:puzzleSolved",
-  secretUnlocked: "divana:secretUnlocked",
   previewUnlocked: "divana:previewUnlocked",
 } as const;
 
@@ -21,16 +20,6 @@ export function setPuzzleSolved() {
   window.localStorage.setItem(KEYS.puzzleSolved, "true");
 }
 
-export function getSecretUnlocked(): boolean {
-  if (!isBrowser()) return false;
-  return window.localStorage.getItem(KEYS.secretUnlocked) === "true";
-}
-
-export function setSecretUnlocked() {
-  if (!isBrowser()) return;
-  window.localStorage.setItem(KEYS.secretUnlocked, "true");
-}
-
 export function getPreviewUnlocked(): boolean {
   if (!isBrowser()) return false;
   return window.localStorage.getItem(KEYS.previewUnlocked) === "true";
@@ -42,6 +31,8 @@ export function setPreviewUnlocked() {
 }
 
 // Dipakai kalau kamu (pembuat website) mau reset progress saat testing.
+// Hidden objects & capsule (future messages) punya storage sendiri
+// (lihat lib/hiddenObjects.ts dan lib/capsule.ts) — dihapus terpisah di sana.
 export function resetAllProgress() {
   if (!isBrowser()) return;
   Object.values(KEYS).forEach((k) => window.localStorage.removeItem(k));

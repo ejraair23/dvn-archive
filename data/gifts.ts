@@ -1,25 +1,30 @@
 // ============================================================
-// DAFTAR HADIAH
+// STRUKTUR HADIAH
 // ============================================================
-// Tambah hadiah baru = tinggal tambah satu object baru di array
-// "gifts" di bawah. Tidak perlu ubah bagian UI mana pun.
+// Website ini dibagi jadi beberapa SECTION besar (lihat "sections" di bawah),
+// dan satu SECTION isinya "All Packs" — kumpulan hadiah kecil yang bisa
+// diunduh/dibuka satu-satu (lihat "packs" di bawah).
 //
-// Field:
+// SECTIONS (custom, masing-masing punya halaman sendiri):
+// - Hall of Fame              -> /hall-of-fame
+// - Divana Wrapped & Awards   -> /wrapped
+// - Birthday & Future Messages -> /birthday
+// - Find All Hidden Objects   -> /hidden-objects
+//
+// "More Gifts Coming Soon" BUKAN section yang bisa dibuka — dia cuma
+// penutup/placeholder di halaman daftar hadiah, lihat app/gifts/page.tsx.
+//
+// PACKS (array generik, tambah pack baru = tambah satu object baru,
+// tidak perlu ubah bagian UI mana pun):
 // - id            : unik, dipakai di URL (/gifts/[id]) — pakai huruf kecil & strip
 // - title         : judul yang tampil di card
 // - tagline       : satu kalimat pendek di card
 // - emoji         : emoji kecil buat ikon card (boleh ganti jadi apa aja)
-// - type          : "download" | "link" | "gallery" | "text" | "custom" | "bundle"
+// - type          : "download" | "link" | "gallery" | "text"
 //                    - "download" -> tampilkan tombol buka/unduh file dari /public
 //                    - "link"     -> tampilkan tombol yang buka URL eksternal (contoh: game)
 //                    - "gallery"  -> tampilkan beberapa gambar dari folder di /public
 //                    - "text"     -> tampilkan isi pesan panjang langsung di halaman
-//                    - "custom"   -> untuk halaman spesial (birthday message & future messages
-//                                    sudah punya halaman sendiri, tidak lewat sistem ini)
-//                    - "bundle"   -> gabungan beberapa bagian berbeda dalam SATU card, pakai
-//                                    field "sections" (lihat interface GiftSection di bawah).
-//                                    Cocok kalau kamu mau satu hadiah menyimpan lebih dari satu
-//                                    isi tanpa judulnya menyebut isinya langsung.
 // - href          : path file di /public (untuk "download"/"gallery") atau URL (untuk "link")
 // - gallery       : array path gambar, khusus type "gallery"
 // - body          : isi teks panjang, khusus type "text"
@@ -27,20 +32,8 @@
 // - accent        : salah satu dari "amber" | "moss" | "blush" | "mist" (warna aksen card)
 // ============================================================
 
-export type GiftType = "download" | "link" | "gallery" | "text" | "custom" | "bundle";
+export type GiftType = "download" | "link" | "gallery" | "text";
 export type Accent = "amber" | "moss" | "blush" | "mist";
-
-// Dipakai untuk hadiah yang isinya gabungan dari beberapa bagian berbeda
-// (contoh: satu file download + satu galeri), tapi ditampilkan sebagai SATU
-// card supaya isinya tidak ketebak dari judul/daftar hadiah.
-export interface GiftSection {
-  label: string; // judul kecil di dalam halaman, boleh tetap samar
-  type: "download" | "gallery" | "text";
-  href?: string; // untuk "download"
-  gallery?: string[]; // untuk "gallery"
-  body?: string; // untuk "text"
-  ready: boolean;
-}
 
 export interface Gift {
   id: string;
@@ -51,100 +44,86 @@ export interface Gift {
   href?: string;
   gallery?: string[];
   body?: string;
-  sections?: GiftSection[]; // dipakai kalau type === "bundle"
   ready: boolean;
   accent: Accent;
 }
 
-export const gifts: Gift[] = [
-  // Gabungan Minecraft Skin + OC Gacha, sengaja dikasih judul yang gak
-  // langsung nyebutin isinya biar gak spoiler dari daftar hadiah.
-  // Ganti "title" dan "tagline" di bawah kalau mau nama lain yang lebih
-  // sesuai sama inside joke kalian — yang penting jangan sebut dua nama
-  // hadiahnya langsung.
-    {
-        id: "dua-bentuk",
-          title: "Dua Bentuk",
-            tagline: "Dua interpretasi kecil yang gue bikin khusus buat lu.",
-              emoji: "🎭",
-                type: "bundle",
-                  sections: [
-                      {
-                            label: "Yang pertama",
-                                  type: "download",
-                                        href: "/gifts/skins/divana-skin.png",
-                                              ready: false,
-                                                  },
-                                                      {
-                                                            label: "Yang kedua",
-                                                                  type: "text",
-                                                                  href: "/gifts/oc-gacha/divana-gacha.txt",
-                                                                              ready: false,
-                                                                                  },
-                                                                                    ],
-                                                                                      ready: false,
-                                                                                        accent: "blush",
-                                                                                        },
+// ============================================================
+// ALL PACKS
+// ============================================================
+// Tambahkan pack baru di sini kapan pun — card baru otomatis muncul
+// di halaman /gifts, tidak perlu ubah komponen apa pun.
 
+export const packs: Gift[] = [
   {
-    id: "divana-wrapped",
-    title: "Divana Wrapped",
-    tagline: "Rekap tahun ini, versi lu. Kayak Spotify Wrapped tapi personal.",
-    emoji: "📊",
-    type: "gallery",
-    gallery: ["/gifts/wrapped/placeholder-1.png"],
-    ready: false,
-    accent: "amber",
-  },
-  {
-    id: "nobody-tell-her",
-    title: "Nobody Tell Her",
-    tagline: "Sebuah game kecil. Main aja, gak usah dijelasin.",
-    emoji: "🕹️",
-    type: "link",
-    href: "https://www.roblox.com/share?code=59fca2d33bc870499caef0100b047e88&type=ExperienceDetails&stamp=1789042573268",
-    ready: false,
-    accent: "amber",
-  },
-  {
-    id: "wallpaper-pack",
-    title: "Wallpaper Pack",
-    tagline: "Kumpulan wallpaper buat HP atau laptop lu.",
-    emoji: "🖼️",
-    type: "gallery",
-    gallery: ["/gifts/wallpapers/placeholder-1.png"],
-    ready: false,
-    accent: "moss",
-  },
-  {
-    id: "sticker-pack",
-    title: "WhatsApp Sticker Pack",
-    tagline: "Sticker meme pack, tinggal import ke WhatsApp.",
-    emoji: "🩵",
+    id: "meme-sticker-pack",
+    title: "Meme + WA Sticker Pack",
+    tagline: "Kumpulan meme & sticker WhatsApp, tinggal import.",
+    emoji: "🎨",
     type: "download",
     href: "/gifts/stickers/sticker-pack.zip",
     ready: false,
     accent: "blush",
   },
   {
-    id: "secret-file",
-    title: "Secret File",
-    tagline: "Ini yang paling gue rahasiain. Butuh kode buat buka.",
-    emoji: "🔒",
-    type: "custom",
-    ready: true,
+    id: "early-access-pass",
+    title: "Early Access Pass",
+    tagline: "Tiket buat lu buka satu hadiah lebih awal dari yang lain.",
+    emoji: "🎟️",
+    type: "text",
+    body: "Placeholder — isi detail Early Access Pass di sini nanti (hadiah mana yang bisa dibuka lebih awal & caranya).",
+    ready: false,
+    accent: "amber",
+  },
+  {
+    id: "poster-certificate-pack",
+    title: "Poster + Certificate Pack",
+    tagline: "Poster dan sertifikat kecil yang gue bikin khusus.",
+    emoji: "🖼️",
+    type: "gallery",
+    gallery: ["/gifts/misc/poster-placeholder-1.png"],
+    ready: false,
+    accent: "moss",
+  },
+  {
+    id: "profile-picture-pack",
+    title: "Profile Picture Pack",
+    tagline: "Set foto profil buat medsos atau WhatsApp lu.",
+    emoji: "📱",
+    type: "gallery",
+    gallery: ["/gifts/misc/pfp-placeholder-1.png"],
+    ready: false,
     accent: "mist",
+  },
+  {
+    id: "minecraft-skin",
+    title: "Minecraft Skin",
+    tagline: "Skin custom yang gue bikin, khusus buat lu.",
+    emoji: "⛏️",
+    type: "download",
+    href: "/gifts/skins/divana-skin.png",
+    ready: false,
+    accent: "moss",
+  },
+  {
+    id: "fake-error-page-pack",
+    title: "Fake Error Page Pack",
+    tagline: "Halaman error palsu yang sengaja dibikin receh.",
+    emoji: "🖥️",
+    type: "gallery",
+    gallery: ["/gifts/misc/fake-error-placeholder-1.png"],
+    ready: false,
+    accent: "amber",
   },
 ];
 
-// Hadiah "custom" yang punya halaman sendiri (di luar sistem card generik):
-// - Birthday Message -> /message
-// - Future Messages   -> /future
-// - Secret File       -> /secret
-// Ketiganya tetap muncul sebagai card di halaman hadiah lewat daftar berikut,
-// supaya urutannya bisa kamu atur juga.
+// ============================================================
+// SECTIONS
+// ============================================================
+// Section besar yang masing-masing punya halaman sendiri. Urutan di sini
+// ikut menentukan urutan tampil di /gifts.
 
-export interface CustomEntry {
+export interface SectionEntry {
   id: string;
   title: string;
   tagline: string;
@@ -153,21 +132,37 @@ export interface CustomEntry {
   accent: Accent;
 }
 
-export const customEntries: CustomEntry[] = [
+export const sections: SectionEntry[] = [
   {
-    id: "birthday-message",
-    title: "Birthday Message",
-    tagline: "Pesan buat hari ini. Baca kalau udah siap baper dikit.",
+    id: "hall-of-fame",
+    title: "Hall of Fame",
+    tagline: "Sebuah ruang penghargaan, khusus buat lu.",
+    emoji: "🏛️",
+    href: "/hall-of-fame",
+    accent: "amber",
+  },
+  {
+    id: "wrapped-awards",
+    title: "Divana Wrapped & Awards",
+    tagline: "Rekap tahun ini — statistik, awards, dan hal-hal receh lainnya.",
+    emoji: "📊",
+    href: "/wrapped",
+    accent: "moss",
+  },
+  {
+    id: "birthday-future",
+    title: "Birthday & Future Messages",
+    tagline: "Pesan buat hari ini, dan ruang buat pesan yang belum saatnya dibaca.",
     emoji: "💌",
-    href: "/message",
+    href: "/birthday",
     accent: "blush",
   },
   {
-    id: "future-messages",
-    title: "Future Messages",
-    tagline: "Tulis pesan buat dibaca nanti — sesuka lu.",
-    emoji: "⏳",
-    href: "/future",
-    accent: "amber",
+    id: "find-hidden-objects",
+    title: "Find All Hidden Objects",
+    tagline: "Ada beberapa hal yang sengaja gue sembunyiin di seluruh website ini.",
+    emoji: "🔍",
+    href: "/hidden-objects",
+    accent: "mist",
   },
 ];
